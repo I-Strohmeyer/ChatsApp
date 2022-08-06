@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, TextInput, Button, Alert } from "react-native";
 // import react native gesture handler
 import "react-native-gesture-handler";
 // import react Navigation
@@ -14,15 +13,6 @@ import Chat from "./components/Chat";
 const Stack = createStackNavigator();
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { text: "" };
-  }
-
-  alertMyText(input = []) {
-    Alert.alert(input.text);
-  }
-
   render() {
     return (
       <NavigationContainer>
@@ -38,5 +28,3 @@ export default class App extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({});

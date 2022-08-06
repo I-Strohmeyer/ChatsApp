@@ -1,14 +1,10 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 export default class Chat extends React.Component {
   constructor() {
@@ -21,6 +17,7 @@ export default class Chat extends React.Component {
         name: "",
         avatar: "https://placeimg.com/140/140/any",
       },
+      isConnected: false,
     };
 
     // firebase config
@@ -39,6 +36,43 @@ export default class Chat extends React.Component {
 
     //reference to firestore collection
     this.referenceChatMessages = firebase.firestore().collection("messages");
+  }
+
+  // load messages from async storage
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  // save messages to async storage
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringify(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  // delete messages from async storage
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   componentDidMount() {
@@ -63,6 +97,20 @@ export default class Chat extends React.Component {
       this.unsubscribe = this.referenceChatMessages
         .orderBy("createdAt", "desc")
         .onSnapshot(this.onCollectionUpdate);
+    });
+
+    // checks if user is online
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        console.log("online");
+        this.setState({ isConnected: true });
+        this.saveMessages();
+      } else {
+        console.log("offline");
+        this.setState({ isConnected: false });
+        // call load messages from async storage
+        this.getMessages();
+      }
     });
   }
 
@@ -92,6 +140,7 @@ export default class Chat extends React.Component {
     this.setState({
       messages,
     });
+    this.saveMessages();
   };
 
   // adds a new message to state
@@ -100,7 +149,10 @@ export default class Chat extends React.Component {
       (previousState) => ({
         messages: GiftedChat.append(previousState.messages, messages),
       }),
-      () => this.addMessage(this.state.messages[0])
+      () => {
+        this.addMessage(this.state.messages[0]);
+        this.saveMessages();
+      }
     );
   }
 
@@ -127,6 +179,14 @@ export default class Chat extends React.Component {
         }}
       />
     );
+  }
+
+  // disables user from sending message if offline
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
   }
 
   render() {

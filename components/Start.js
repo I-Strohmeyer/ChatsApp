@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+//import LinearGradient from 'react-native-linear-gradient';
 
 const image = require("../assets/bg_pic.png");
 
