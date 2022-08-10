@@ -1,10 +1,14 @@
 import React from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 const firebase = require("firebase");
 require("firebase/firestore");
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import MapView from "react-native-maps";
+
+import CustomActions from "./CustomActions";
 
 export default class Chat extends React.Component {
   constructor() {
@@ -16,8 +20,12 @@ export default class Chat extends React.Component {
         _id: "",
         name: "",
         avatar: "https://placeimg.com/140/140/any",
+        image: null,
+        location: null,
       },
       isConnected: false,
+      image: null,
+      location: null,
     };
 
     // firebase config
@@ -78,7 +86,7 @@ export default class Chat extends React.Component {
   componentDidMount() {
     // display user name at the top of screen
     let { name } = this.props.route.params;
-    this.props.navigation.setOptions({ title: name } || "Unknown");
+    this.props.navigation.setOptions({ title: name || "Unknown" });
 
     // user authentication via firebase
     this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -135,6 +143,8 @@ export default class Chat extends React.Component {
           name: data.user.name,
           avatar: data.user.avatar,
         },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({
@@ -164,6 +174,8 @@ export default class Chat extends React.Component {
       text: message.text || "",
       createdAt: message.createdAt,
       user: message.user,
+      image: message.image || "",
+      location: message.location || null,
     });
   }
 
@@ -189,31 +201,60 @@ export default class Chat extends React.Component {
     }
   }
 
+  // renders custom actions
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  // renders map view if the message includes a location
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
   render() {
     return (
       //set bgColor that user selected
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: this.props.route.params.bgColor,
-        }}
-      >
-        <GiftedChat
-          messages={this.state.messages}
-          renderBubble={this.renderBubble.bind(this)}
-          onSend={(messages) => this.onSend(messages)}
-          user={{
-            _id: this.state.user._id,
-            name: this.props.route.params.name,
-            avatar: this.state.user.avatar,
+      <ActionSheetProvider>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: this.props.route.params.bgColor,
           }}
-          showUserAvatar={true}
-          showAvatarForEveryMessage={true}
-        />
-        {Platform.OS === "android" ? (
-          <KeyboardAvoidingView behavior="height" />
-        ) : null}
-      </View>
+        >
+          <GiftedChat
+            messages={this.state.messages}
+            renderBubble={this.renderBubble.bind(this)}
+            renderInputToolbar={this.renderInputToolbar.bind(this)}
+            renderCustomView={this.renderCustomView}
+            renderActions={this.renderCustomActions}
+            onSend={(messages) => this.onSend(messages)}
+            user={{
+              _id: this.state.user._id,
+              name: this.props.route.params.name,
+              avatar: this.state.user.avatar,
+            }}
+            showUserAvatar={true}
+            showAvatarForEveryMessage={true}
+          />
+          {Platform.OS === "android" ? (
+            <KeyboardAvoidingView behavior="height" />
+          ) : null}
+        </View>
+      </ActionSheetProvider>
     );
   }
 }

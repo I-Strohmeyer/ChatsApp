@@ -9,16 +9,16 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-//import LinearGradient from 'react-native-linear-gradient';
+//import { LinearGradient } from "expo-linear-gradient";
 
-const image = require("../assets/bg_pic.png");
+const image = require("../assets/new_bg_pic.png");
 
-const colors = ["#090C08", "#474056", "#8A95A5", "#B9C6AE"];
+const colors = ["#5d0979", "#4b2f92", "#4047a2", "#00d4ff"];
 
 export default class Start extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { name: "", bgColor: "#474056" };
+    this.state = { name: "", bgColor: "#4b2f92" };
 
     //this.state = { selectedColor: "red" };
   }
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     width: "88%",
     height: "44%",
     backgroundColor: "#fff",
+    borderRadius: 24,
   },
   content: {
     width: "88%",
@@ -137,12 +138,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   nameWrapper: {
-    borderColor: "#757083",
+    borderColor: "#5d0979",
     borderWidth: 2,
     height: 50,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 12,
+    borderRadius: 8,
   },
   icon: {
     opacity: 0.5,
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   colorText: {
     fontSize: 16,
     fontWeight: "300",
-    color: "#757083",
+    color: "#4b2f92",
   },
   colorCircleWrapper: {
     flexDirection: "row",
@@ -167,10 +169,11 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   button: {
-    backgroundColor: "#757083",
+    backgroundColor: "#5d0979",
     alignItems: "center",
     justifyContent: "center",
     height: 50,
+    borderRadius: 8,
   },
   btnText: {
     textAlign: "center",
