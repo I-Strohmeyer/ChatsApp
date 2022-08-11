@@ -61,7 +61,7 @@ expo install react-native-reanimated react-native-gesture-handler react-native-s
 - Download [Android Studio](https://developer.android.com/studio)
 - If you are on Windows make sure to follow these [Instructions](https://images.careerfoundry.com/public/courses/fullstack-immersion/A5/E1/Full-Stack_Immersion_Exercise_5.1_Windows_10_Environment_Set-up_for_Android_Studio.pdf)
 - During the installation make sure to check "Android Virtual Device"
-- After you are done with the installation open up the application and select "Virtual Device Manager from the plus dropdown menu"
+- After you are done with the installation, open up Android Studio and select "Virtual Device Manager" from the plus dropdown menu
 - This will open up a selection of emulated devices you can choose from
 - Select one, and after it's installation you can press the play button to start it
 
@@ -91,7 +91,7 @@ npm install firebase
 
 - Register your app in the [Console](https://console.firebase.google.com/)
 - Copy the config settings into your app as instructed
-- Also set up anonymous authentication in your [firebase](https://console.firebase.google.com/) project
+- Also set up anonymous authentication in your [Firebase](https://console.firebase.google.com/) project
 
 #### Async storage - Offline functionalities
 
