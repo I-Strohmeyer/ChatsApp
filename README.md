@@ -1,4 +1,4 @@
-# ChatsApp
+# ChatsApp :iphone:
 
 A chat app for you and your friends
 
